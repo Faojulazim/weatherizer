@@ -9,11 +9,12 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="style.css" />
     <title>Frontend Mentor | Weather app</title>
   </head>
   <body
-    class="font-BricolageGrotesque p-5 bg-Neutral900 text-Neutral0 max-w-[1400px] mx-auto"
+    class="font-BricolageGrotesque py-5 px-5 lg:pt-10 lg:pb-16 bg-Neutral900 text-Neutral0 max-w-[1400px] mx-auto"
   >
     <div id="weather-app-container" class="">
       <nav class="flex items-center justify-between">
@@ -30,196 +31,232 @@
         </div>
       </nav>
       <div>
-        <h1 class="text-6xl mt-14 font-[700] text-center">
+        <h1
+          class="text-6xl 500:text-7xl mt-14 md:mt-20 font-[700] text-center max-w-[800px] lg:max-w-none mx-auto"
+        >
           How's the sky looking today?
         </h1>
-        <div id="search-bar" class="mt-10 flex flex-col gap-y-3">
-          <div class="relative flex items-center">
-            <img
-              class="absolute left-5"
-              src="assets/images/icon-search.svg"
-              alt=""
-            />
-            <input
-              class="bg-Neutral200/20 w-full px-14 py-3 rounded-lg"
-              type="text"
-              name=""
-              placeholder="Search for a place..."
-              id=""
-            />
+        <div
+          id="search-bar"
+          class="mt-10 md:mt-14 flex flex-col gap-y-3 650:flex-row 650:gap-x-5 max-w-[700px] mx-auto"
+        >
+          <div class="relative flex items-center 650:w-full">
+            <div class="w-full relative">
+              <div class="w-full flex items-center">
+                <img
+                  class="absolute left-5"
+                  src="assets/images/icon-search.svg"
+                  alt=""
+                />
+                <input
+                  class="bg-Neutral200/20 w-full px-14 py-3 500:py-4 rounded-lg outline-none"
+                  type="text"
+                  name=""
+                  autocomplete="off"
+                  placeholder="Search for a place..."
+                  id="searchInput"
+                />
+              </div>
+              <div
+                id="search-container"
+                class="bg-Neutral800 absolute top-[55px] rounded-lg mt-3 z-[200] w-full"
+              ></div>
+            </div>
           </div>
-          <button class="w-full bg-Blue500 py-[10px] rounded-lg">Search</button>
+          <button
+            class="w-full bg-Blue500 py-[10px] rounded-lg 500:py-[14px] 650:w-auto px-7"
+            id="searchBtn"
+          >
+            Search
+          </button>
         </div>
         <div
-          id="weather-layout-container"
-          class="flex flex-col items-center justify-center mt-7 relative rounded-3xl py-10 overflow-hidden w-full"
+          class="flex flex-col xl:flex-row mt-5 xl:mt-12 items-stretch h-full gap-x-7"
         >
-          <img
-            class="absolute w-full 600:hidden top-0 left-0 object-cover -z-[200]"
-            src="assets/images/bg-today-small.svg"
-            alt=""
-          />
-          <img
-            class="absolute hidden 600:block h-full w-full top-0 left-0 object-cover -z-[200]"
-            src="assets/images/bg-today-large.svg"
-            alt=""
-          />
-          <div class="flex flex-col items-center mt-4 font-DMSans w-full">
-            <div id="primary-card" class="flex flex-col items-center">
-              <h1 class="font-[600] text-3xl">Berlin, Germany</h1>
-              <p>Tuesday, Aug 5, 2025</p>
-            </div>
-            <div class="flex mt-2 items-center justify-between px-5">
-              <img
-                class="w-[120px]"
-                src="assets/images/icon-sunny.webp"
-                alt=""
-              />
-              <h1 class="text-8xl font-[700] italic">20°</h1>
-            </div>
-          </div>
-        </div>
-        <div
-          id="additional-info-container"
-          class="font-DMSans grid grid-cols-[repeat(1,minmax(50px,1fr))] 425:grid-cols-[repeat(2,minmax(50px,1fr))] 600:grid-cols-[repeat(3,minmax(50px,1fr))] md:grid-cols-[repeat(4,minmax(50px,1fr))] gap-4 mt-5"
-        >
-          <div
-            id="card"
-            class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
-          >
-            <h3 class="text-lg">Feels Like</h3>
-            <h1 class="text-3xl text-white">18°</h1>
-          </div>
-          <div
-            id="card"
-            class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
-          >
-            <h3 class="text-lg">Humidity</h3>
-            <h1 class="text-3xl text-white">46%</h1>
-          </div>
-          <div
-            id="card"
-            class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
-          >
-            <h3 class="text-lg">Wind</h3>
-            <h1 class="text-3xl text-white">14 km/h</h1>
-          </div>
-          <div
-            id="card"
-            class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
-          >
-            <h3 class="text-lg">Precipitation</h3>
-            <h1 class="text-3xl text-white">0 mm</h1>
-          </div>
-        </div>
-        <div id="forecast-info-container" class="font-DMSans mt-5">
-          <p class="font-[500] text-lg">Daily Forecast</p>
-          <div
-            id="forecast-container"
-            class="mt-5 grid grid-cols-[repeat(2,minmax(50px,1fr))] 425:grid-cols-[repeat(3,minmax(50px,1fr))] 500:grid-cols-[repeat(4,minmax(50px,1fr))] md:grid-cols-[repeat(5,minmax(50px,1fr))] 800:grid-cols-[repeat(6,minmax(50px,1fr))] 900:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
-          >
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Tue</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-rain.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>20°</p>
-                <p class="text-Neutral200">14°</p>
+          <div class="w-full xl:w-[70%] h-full">
+            <div class="h-full" id="weather-forecast-section">
+              <div
+                id="weather-layout-container"
+                class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('assets/images/bg-today-small.svg')] 600:bg-[url('assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
+              >
+                <!-- <img
+                  class="absolute w-full 600:hidden top-0 left-0 object-cover -z-[200] h-full"
+                  src="assets/images/bg-today-small.svg"
+                  alt=""
+                />
+                <img
+                  class="absolute hidden 600:block h-full w-full top-0 left-0 object-cover -z-[200]"
+                  src="assets/images/bg-today-large.svg"
+                  alt=""
+                /> -->
+                <div
+                  class="flex flex-col md:flex-row md:px-7 justify-between md:py-10 items-center mt-4 font-DMSans w-full"
+                >
+                  <div
+                    id="primary-card"
+                    class="flex flex-col gap-y-1 md:gap-y-2 items-center md:items-start"
+                  >
+                    <h1 class="font-[600] text-3xl md:text-4xl">
+                      Berlin, Germany
+                    </h1>
+                    <p class="md:text-lg">Tuesday, Aug 5, 2025</p>
+                  </div>
+                  <div
+                    class="flex mt-2 md:mt-0 items-center justify-between px-5 md:px-0 md:pr-2 md:gap-x-5"
+                  >
+                    <img
+                      class="w-[120px]"
+                      src="assets/images/icon-sunny.webp"
+                      alt=""
+                    />
+                    <h1 class="text-8xl font-[700] italic">20°</h1>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Wed</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-drizzle.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>21°</p>
-                <p class="text-Neutral200">15°</p>
+              <div
+                id="additional-info-container"
+                class="font-DMSans grid grid-cols-[repeat(1,minmax(50px,1fr))] 425:grid-cols-[repeat(2,minmax(50px,1fr))] 600:grid-cols-[repeat(3,minmax(50px,1fr))] md:grid-cols-[repeat(4,minmax(50px,1fr))] gap-4 lg:gap-5 mt-5"
+              >
+                <div
+                  id="card"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                >
+                  <h3 class="text-lg">Feels Like</h3>
+                  <h1 class="text-3xl text-white">18°</h1>
+                </div>
+                <div
+                  id="card"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                >
+                  <h3 class="text-lg">Humidity</h3>
+                  <h1 class="text-3xl text-white">46%</h1>
+                </div>
+                <div
+                  id="card"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                >
+                  <h3 class="text-lg">Wind</h3>
+                  <h1 class="text-3xl text-white">14 km/h</h1>
+                </div>
+                <div
+                  id="card"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                >
+                  <h3 class="text-lg">Precipitation</h3>
+                  <h1 class="text-3xl text-white">0 mm</h1>
+                </div>
               </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Thu</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-sunny.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>24°</p>
-                <p class="text-Neutral200">14°</p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Fri</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-partly-cloudy.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>25°</p>
-                <p class="text-Neutral200">13°</p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Sat</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-storm.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>21°</p>
-                <p class="text-Neutral200">15°</p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Sun</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-snow.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>25°</p>
-                <p class="text-Neutral200">16°</p>
-              </div>
-            </div>
-            <div
-              class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-            >
-              <p class="text-lg">Mon</p>
-              <img
-                class="w-[60px] py-4"
-                src="assets/images/icon-fog.webp"
-                alt=""
-              />
-              <div class="flex items-center justify-between w-full">
-                <p>24°</p>
-                <p class="text-Neutral200">15°</p>
+              <div id="forecast-info-container" class="font-DMSans mt-7">
+                <p class="font-[500] text-lg">Daily Forecast</p>
+                <div
+                  id="forecast-container"
+                  class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(4,minmax(50px,1fr))] 500:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
+                >
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Tue</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-rain.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>20°</p>
+                      <p class="text-Neutral200">14°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Wed</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-drizzle.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>21°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Thu</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-sunny.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>24°</p>
+                      <p class="text-Neutral200">14°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Fri</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-partly-cloudy.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>25°</p>
+                      <p class="text-Neutral200">13°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Sat</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-storm.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>21°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Sun</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-snow.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>25°</p>
+                      <p class="text-Neutral200">16°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Mon</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-fog.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>24°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div
             id="forecast-info-container"
-            class="font-DMSans mt-5 bg-Neutral800 rounded-lg px-3 py-3"
+            class="font-DMSans rounded-lg px-4 py-3 mt-5 xl:mt-0 flex flex-col gap-y-3 min-h-full w-full xl:w-[30%] bg-Neutral800 lg:rounded-2xl"
           >
             <div class="flex items-center justify-between">
               <p class="font-[500] text-lg">Hourly Forecast</p>
@@ -230,8 +267,7 @@
                 <img src="assets/images/icon-dropdown.svg" alt="" />
               </div>
             </div>
-            <!-- grid grid-cols-[repeat(2,minmax(50px,1fr))] 425:grid-cols-[repeat(3,minmax(50px,1fr))] 500:grid-cols-[repeat(4,minmax(50px,1fr))] md:grid-cols-[repeat(5,minmax(50px,1fr))] 800:grid-cols-[repeat(6,minmax(50px,1fr))] 900:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4 -->
-            <div id="forecast-container" class="mt-5 flex flex-col gap-y-3">
+            <div class="flex flex-col gap-y-4 mt-2">
               <div
                 id="card"
                 class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
@@ -349,5 +385,6 @@
         </div>
       </div>
     </div>
+    <script src="script.js"></script>
   </body>
 </html>
