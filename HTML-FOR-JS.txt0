@@ -1,170 +1,4 @@
-// Imperial (°F (Fahrenheit))
-// Metric (°C (Celsius)))
-import { imageAlgorithm } from "./imageAlgorithm.js";
-const searchInput = document.querySelector("#searchInput");
-const searchBtn = document.querySelector("#searchBtn");
-const all_info_wrapper = document.querySelector("#all-info-wrapper");
-const search_container = document.querySelector("#search-container");
-let UnitsGlobal = "metric";
-let searchCity;
-let latlong;
-
-async function getWeather(
-  lat,
-  lon,
-  tempUnit = "celsius",
-  speedUnit = "kmh",
-  precipitation = "mm"
-) {
-  const urlOneDay = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,apparent_temperature,precipitation,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_hours,wind_speed_10m_max&temperature_unit=${tempUnit}&wind_speed_unit=${speedUnit}&precipitation_unit=${precipitation}&forecast_days=1&timezone=auto
-`;
-  const urlSevenDays = `https://api.open-meteo.com/v1/forecast?
-latitude=${lat}&longitude=${lon}&
-current_weather=true&
-hourly=temperature_2m,apparent_temperature,precipitation,relativehumidity_2m,weathercode&
-daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_hours,wind_speed_10m_max,weathercode&
-temperature_unit=${tempUnit}&
-wind_speed_unit=${speedUnit}&
-precipitation_unit=${precipitation}&
-forecast_days=7&
-timezone=auto
-
-`;
-  const responseOneDay = await fetch(urlOneDay);
-  const responseSevenDays = await fetch(urlSevenDays);
-  const dataJsonOneDay = await responseOneDay.json();
-  const dataJsonSevenDays = await responseSevenDays.json();
-  renderHTML(dataJsonOneDay, dataJsonSevenDays);
-}
-async function getSearch(query, isRunnable = true, count = 5) {
-  const city = `https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=${Number(
-    count
-  )}`;
-  const cityData = await fetch(city);
-  const cityJson = await cityData.json();
-  if (isRunnable) {
-    return cityJson;
-  }
-  searchFunc(cityJson, query);
-}
-async function searchFunc(cityJson, query) {
-  search_container.innerHTML = "";
-  let searchHTML = "";
-  if (cityJson.results) {
-    search_container.classList.add("p-2");
-    cityJson.results.forEach((items) => {
-      searchHTML += `
-      <div id="${items.name}"
-        data-searchcard
-          class="px-5 py-2 cursor-pointer rounded-lg hover:bg-Neutral700 border border-Neutral800 hover:border-Neutral600 transition-all"
-        >
-        <h2>${items.name}, ${items.country}</h2>
-      </div>`;
-      search_container.innerHTML = searchHTML;
-      searchClick();
-    });
-  } else {
-    search_container.classList.remove("p-2");
-  }
-}
-
-searchInput.addEventListener("input", (e) => {
-  if (!e.target.value) {
-    search_container.classList.remove("p-2");
-    return;
-  }
-  setTimeout(() => {
-    getSearch(e.target.value, false);
-  }, 100);
-});
-
-async function searchClick() {
-  const searchCard = document.querySelectorAll("[data-searchcard");
-  searchCard.forEach((cards) => {
-    cards.addEventListener("click", (e) => {
-      searchInput.value = cards.querySelector("h2").innerText;
-      searchCity = cards.id;
-      search_container.innerHTML = "";
-      search_container.classList.remove("p-2");
-      const searchBtn = document.querySelector("#searchBtn");
-      searchBtn.addEventListener(
-        "click",
-        async (e) => {
-          let searchTag = await getSearch(cards.id, 1, true);
-          latlong = {
-            latitude: searchTag.results[0].latitude,
-            longitude: searchTag.results[0].longitude,
-          };
-          getWeather(
-            latlong.latitude,
-            latlong.longitude,
-            "celsius",
-            "mph",
-            "inch"
-          );
-        },
-        { once: true }
-      );
-    });
-  });
-}
-function getHours(currentDate, weatherFind) {
-  let currentVal;
-  for (let i = 0; i <= weatherFind.length; i++) {
-    if (currentDate == i) {
-      currentVal = weatherFind[i];
-    }
-  }
-  return currentVal;
-}
-function findDayName(date) {
-  const dayName = new Date(date).toLocaleDateString("en-US", {
-    weekday: "long",
-  });
-  return dayName;
-}
-
-function renderHTML(data, dataSevenDays) {
-  let weatherArr = {
-    current_weather: data.current_weather,
-    daily: data.daily,
-    daily_units: data.daily_units,
-    hourly: data.hourly,
-    timezone: data.timezone,
-    current_units: data.current_weather_units,
-    hourly_units: data.hourly_units,
-  };
-
-  let currentDate = new Date(weatherArr.current_weather.time).getHours();
-  console.log(data);
-  console.log(dataSevenDays);
-  console.log(imageAlgorithm(Number(dataSevenDays.daily.weathercode[0])));
-
-  let cards = "";
-  dataSevenDays.daily.time.map((items, index) => {
-    cards += `    
-                  <div
-                  class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
-                  >
-                    <p class="text-lg">${findDayName(items).slice(0, 3)}</p>
-                    <img
-                      class="w-[60px] py-4"
-                      src="${imageAlgorithm(
-                        Number(dataSevenDays.daily.weathercode[index])
-                      )}"
-                      alt=""
-                    />
-                    <div class="flex items-center justify-between w-full">
-                      <p>${dataSevenDays.daily.temperature_2m_max[index]}°</p>
-                      <p class="text-Neutral200">${
-                        dataSevenDays.daily.temperature_2m_min[index]
-                      }°</p>
-                    </div>
-                  </div>`;
-  });
-
-  all_info_wrapper.innerHTML = "";
-  all_info_wrapper.innerHTML = `<div
+<div
           class="flex flex-col xl:flex-row mt-5 xl:mt-12 items-stretch h-full gap-x-7"
           id="all-info-container"
         >
@@ -192,30 +26,19 @@ function renderHTML(data, dataSevenDays) {
                     class="flex flex-col gap-y-1 md:gap-y-2 items-center md:items-start"
                   >
                     <h1 class="font-[600] text-3xl md:text-4xl">
-                      ${searchInput.value}
+                      Berlin, Germany
                     </h1>
-
-                    <p class="md:text-lg">${new Date(
-                      weatherArr.current_weather.time
-                    ).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}</p>
+                    <p class="md:text-lg">Tuesday, Aug 5, 2025</p>
                   </div>
                   <div
                     class="flex mt-2 md:mt-0 items-center justify-between px-5 md:px-0 md:pr-2 md:gap-x-5"
                   >
                     <img
                       class="w-[120px]"
-                      src="${imageAlgorithm(
-                        Number(weatherArr.current_weather.weathercode)
-                      )}"
+                      src="assets/images/icon-sunny.webp"
                       alt=""
                     />
-                    <h1 class="text-8xl font-[700] italic">
-                    ${weatherArr.current_weather.temperature}°</h1>
+                    <h1 class="text-8xl font-[700] italic">20°</h1>
                   </div>
                 </div>
               </div>
@@ -228,39 +51,28 @@ function renderHTML(data, dataSevenDays) {
                   class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Feels Like</h3>
-                  <h1 class="text-3xl text-white">${getHours(
-                    currentDate,
-                    weatherArr.hourly.apparent_temperature
-                  )}°</h1>
+                  <h1 class="text-3xl text-white">18°</h1>
                 </div>
                 <div
                   id="card"
                   class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Humidity</h3>
-                  <h1 class="text-3xl text-white">${getHours(
-                    currentDate,
-                    weatherArr.hourly.relativehumidity_2m
-                  )}%</h1>
+                  <h1 class="text-3xl text-white">46%</h1>
                 </div>
                 <div
                   id="card"
                   class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Wind</h3>
-                  <h1 class="text-3xl text-white">
-                  ${weatherArr.current_weather.windspeed}
-                  ${weatherArr.current_units.windspeed}</h1>
+                  <h1 class="text-3xl text-white">14 km/h</h1>
                 </div>
                 <div
                   id="card"
                   class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Precipitation</h3>
-                  <h1 class="text-3xl text-white">${
-                    weatherArr.daily.precipitation_sum
-                  }
-                  ${weatherArr.daily_units.precipitation_sum}</h1>
+                  <h1 class="text-3xl text-white">0 mm</h1>
                 </div>
               </div>
               <div id="forecast-info-container" class="font-DMSans mt-7">
@@ -268,8 +80,105 @@ function renderHTML(data, dataSevenDays) {
                 <div
                   id="forecast-container"
                   class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(4,minmax(50px,1fr))] 500:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
-                >     
-                ${cards}
+                >
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Tue</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-rain.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>20°</p>
+                      <p class="text-Neutral200">14°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Wed</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-drizzle.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>21°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Thu</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-sunny.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>24°</p>
+                      <p class="text-Neutral200">14°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Fri</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-partly-cloudy.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>25°</p>
+                      <p class="text-Neutral200">13°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Sat</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-storm.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>21°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Sun</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-snow.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>25°</p>
+                      <p class="text-Neutral200">16°</p>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                  >
+                    <p class="text-lg">Mon</p>
+                    <img
+                      class="w-[60px] py-4"
+                      src="assets/images/icon-fog.webp"
+                      alt=""
+                    />
+                    <div class="flex items-center justify-between w-full">
+                      <p>24°</p>
+                      <p class="text-Neutral200">15°</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -402,5 +311,4 @@ function renderHTML(data, dataSevenDays) {
               </div>
             </div>
           </div>
-        </div>`;
-}
+        </div>
