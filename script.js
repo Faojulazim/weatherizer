@@ -278,7 +278,7 @@ function renderHTML(data, dataSevenDays) {
             id="forecast-info-container"
             class="font-DMSans rounded-lg px-4 py-3 mt-5 xl:mt-0 flex flex-col gap-y-3 min-h-full w-full xl:w-[30%] bg-Neutral800 lg:rounded-2xl"
           >
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between cursor-pointer">
               <p class="font-[500] text-lg">Hourly Forecast</p>
               <div
                 class="flex items-center px-3 py-[6px] gap-x-2 bg-Neutral600 rounded-md"
