@@ -123,8 +123,56 @@ function findDayName(date) {
   });
   return dayName;
 }
+function getHourlyForecast(
+  dataJsonSevenDays,
+  currentHour,
+  dataDays,
+  weatherCodes
+) {
+  let currentWeatherCode = helperDateFunc(
+    findDayName(dataJsonSevenDays.current_weather.time),
+    dataDays,
+    dataJsonSevenDays.daily.time,
+    weatherCodes
+  );
+  let lastHour = currentHour + 8;
+  let hoursTemp = currentWeatherCode.days.slice(currentHour, lastHour);
+  let hoursWeatherCode = currentWeatherCode.weatherCodesForDay.slice(
+    currentHour,
+    lastHour
+  );
 
+  let hourArr = [];
+  for (let i = currentHour; i < lastHour; i++) {
+    hourArr.push(i);
+  }
+  return {
+    hoursData: hoursTemp,
+    weathercodes: hoursWeatherCode,
+    hours: hourArr,
+  };
+}
+
+function helperDateFunc(currentDayName, dataDays, dailyDates, weatherCodes) {
+  let currHourlyData;
+
+  for (let i = 0; i < dataDays.length; i++) {
+    if (currentDayName === findDayName(dailyDates[i])) {
+      currHourlyData = {
+        days: dataDays[i],
+        weatherCodesForDay: weatherCodes[i],
+      };
+    }
+  }
+  return currHourlyData;
+}
 function renderHTML(data, dataSevenDays) {
+  let cards = "";
+  let cardsHourly = "";
+  let weekDays = 7;
+  let daysData = [];
+  let daysWeatherCode = [];
+
   let weatherArr = {
     current_weather: data.current_weather,
     daily: data.daily,
@@ -136,11 +184,23 @@ function renderHTML(data, dataSevenDays) {
   };
 
   let currentDate = new Date(weatherArr.current_weather.time).getHours();
-  console.log(data);
-  console.log(dataSevenDays);
-  console.log(imageAlgorithm(Number(dataSevenDays.daily.weathercode[0])));
 
-  let cards = "";
+  for (let i = 0; i < weekDays; i++) {
+    let chunk = dataSevenDays.hourly.temperature_2m.slice(i * 24, (i + 1) * 24);
+    let chunk2 = dataSevenDays.hourly.weathercode.slice(i * 24, (i + 1) * 24);
+    daysData.push(chunk);
+    daysWeatherCode.push(chunk2);
+  }
+  console.log(dataSevenDays);
+
+  let currentHourlyForecastArr = getHourlyForecast(
+    dataSevenDays,
+    currentDate,
+    daysData,
+    daysWeatherCode
+  );
+  console.log(currentHourlyForecastArr);
+
   dataSevenDays.daily.time.map((items, index) => {
     cards += `    
                   <div
@@ -161,6 +221,25 @@ function renderHTML(data, dataSevenDays) {
                       }°</p>
                     </div>
                   </div>`;
+  });
+  currentHourlyForecastArr.hoursData.map((items, index) => {
+    cardsHourly += `
+                  <div
+                id="card"
+                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
+              >
+                <div class="flex items-center gap-x-2 py-2">
+                  <img
+                    class="w-[40px]"
+                    src="${imageAlgorithm(
+                      currentHourlyForecastArr.weathercodes[index]
+                    )}"
+                    alt=""
+                  />
+                  <p class="uppercase text-lg">5 pm</p>
+                </div>
+                <p class="mr-1">${items}°</p>
+              </div>`;
   });
 
   all_info_wrapper.innerHTML = "";
@@ -283,123 +362,13 @@ function renderHTML(data, dataSevenDays) {
               <div
                 class="flex items-center px-3 py-[6px] gap-x-2 bg-Neutral600 rounded-md"
               >
-                <p>Tuesday</p>
+                <p>${"Tuesday"}</p>
                 <img src="assets/images/icon-dropdown.svg" alt="" />
               </div>
             </div>
             <div class="flex flex-col gap-y-4 mt-2">
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-overcast.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">3 pm</p>
-                </div>
-                <p class="mr-1">68°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-partly-cloudy.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">4 pm</p>
-                </div>
-                <p class="mr-1">68°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-sunny.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">5 pm</p>
-                </div>
-                <p class="mr-1">68°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-overcast.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">6 pm</p>
-                </div>
-                <p class="mr-1">66°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-snow.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">7 pm</p>
-                </div>
-                <p class="mr-1">66°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-fog.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">8 pm</p>
-                </div>
-                <p class="mr-1">64°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-snow.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">9 pm</p>
-                </div>
-                <p class="mr-1">63°</p>
-              </div>
-              <div
-                id="card"
-                class="flex items-center justify-between bg-Neutral700 rounded-lg px-3 border border-Neutral200/10"
-              >
-                <div class="flex items-center gap-x-2 py-2">
-                  <img
-                    class="w-[40px]"
-                    src="assets/images/icon-overcast.webp"
-                    alt=""
-                  />
-                  <p class="uppercase text-lg">10 pm</p>
-                </div>
-                <p class="mr-1">63°</p>
-              </div>
+              
+              ${cardsHourly}
             </div>
           </div>
         </div>`;
