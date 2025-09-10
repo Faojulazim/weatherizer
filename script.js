@@ -1,21 +1,124 @@
+import { imageAlgorithm } from "./imageAlgorithm.js";
 // Imperial (°F (Fahrenheit))
 // Metric (°C (Celsius)))
-import { imageAlgorithm } from "./imageAlgorithm.js";
 const searchInput = document.querySelector("#searchInput");
 const searchBtn = document.querySelector("#searchBtn");
 const all_info_wrapper = document.querySelector("#all-info-wrapper");
 const search_container = document.querySelector("#search-container");
-let UnitsGlobal = "metric";
-let searchCity;
+const unit_button = document.querySelector("#unit-button");
+const units_dropdown = document.querySelector("#units-dropdown");
+const switchUnits = document.querySelector("#switchUnits");
+const dropdownIcon = document.querySelectorAll("[data-dropdownIcon]");
+const tempBtns = document.querySelectorAll("[data-tempBtns]");
+const speedBtns = document.querySelectorAll("[data-speedBtns]");
+const precipitationBtns = document.querySelectorAll("[data-precipitationBtns]");
+
+let isAlreadyRendered = false;
+let metric_imperial = "metric";
+let unitsGlobal = "celsius";
+let speedUnit = "kmh";
+let precipitation = "mm";
+let searchCity = "";
 let latlong;
 
-async function getWeather(
-  lat,
-  lon,
-  tempUnit = "celsius",
-  speedUnit = "kmh",
-  precipitation = "mm"
-) {
+function btnForeach(btns, btnCategory) {
+  btns.forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      if (btnCategory == "temperature") {
+        unitsGlobal = btn.id;
+        helperFuncForBtns();
+      } else if (btnCategory == "speed") {
+        speedUnit = btn.id;
+        helperFuncForBtns();
+      } else if (btnCategory == "precipitation") {
+        precipitation = btn.id;
+        helperFuncForBtns();
+      }
+      btn.classList.add("bg-Neutral700");
+      btn.querySelector("#checkmark").classList.remove("hidden");
+      btns.forEach((items) => {
+        if (btn !== items) {
+          items.classList.remove("bg-Neutral700");
+          items.querySelector("#checkmark").classList.add("hidden");
+        }
+      });
+    });
+  });
+}
+async function helperFuncForBtns() {
+  if (searchCity) {
+    const searchedData = await getSearch(searchCity, true, 1);
+    getWeather(
+      searchedData.results[0].latitude,
+      searchedData.results[0].longitude,
+      unitsGlobal,
+      speedUnit,
+      precipitation
+    );
+  }
+}
+btnForeach(tempBtns, "temperature");
+btnForeach(speedBtns, "speed");
+btnForeach(precipitationBtns, "precipitation");
+function helperParameterFunc(unit) {
+  metric_imperial = unit;
+  unitsGlobal = unit == "imperial" ? "fahrenheit" : "celsius";
+  speedUnit = unit == "imperial" ? "mph" : "kmh";
+  precipitation = unit == "imperial" ? "inch" : "mm";
+  updateButtonGroup(tempBtns, unitsGlobal);
+  updateButtonGroup(speedBtns, speedUnit);
+  updateButtonGroup(precipitationBtns, precipitation);
+}
+switchUnits.addEventListener("click", async (e) => {
+  if (metric_imperial == "metric") {
+    helperParameterFunc("imperial");
+  } else if (metric_imperial == "imperial") {
+    helperParameterFunc("metric");
+  }
+  switchUnits.innerText = `Switch to ${
+    metric_imperial === "metric" ? "Imperial" : "Metric"
+  }`;
+  helperFuncForBtns();
+});
+function updateButtonGroup(btns, activeId) {
+  btns.forEach((btn) => {
+    const checkmark = btn.querySelector("#checkmark");
+    if (btn.id === activeId) {
+      btn.classList.add("bg-Neutral700");
+      checkmark.classList.remove("hidden");
+    } else {
+      btn.classList.remove("bg-Neutral700");
+      checkmark.classList.add("hidden");
+    }
+  });
+}
+unit_button.addEventListener("click", (e) => {
+  units_dropdown.classList.toggle("hidden");
+  document
+    .querySelector("#firstButtonDropdownIcon")
+    .classList.toggle("rotate-180");
+});
+function dropdownFunc(dropdownDiv, secondIcon) {
+  document.body.addEventListener("click", (e) => {
+    if (
+      e.target.closest("#units-dropdown") ||
+      e.target.closest("#unit-button") ||
+      e.target.closest("#daydropdownBtn") ||
+      e.target.closest("#days-dropdown")
+    ) {
+      return;
+    } else {
+      dropdownDiv.classList.add("hidden");
+      document
+        .querySelector("#firstButtonDropdownIcon")
+        .classList.remove("rotate-180");
+      if (!secondIcon) return;
+      secondIcon.classList.remove("rotate-180");
+    }
+  });
+}
+dropdownFunc(units_dropdown);
+async function getWeather(lat, lon, tempUnit, speedUnit, precipitation) {
   const urlOneDay = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,apparent_temperature,precipitation,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_hours,wind_speed_10m_max&temperature_unit=${tempUnit}&wind_speed_unit=${speedUnit}&precipitation_unit=${precipitation}&forecast_days=1&timezone=auto
 `;
   const urlSevenDays = `https://api.open-meteo.com/v1/forecast?
@@ -27,9 +130,7 @@ temperature_unit=${tempUnit}&
 wind_speed_unit=${speedUnit}&
 precipitation_unit=${precipitation}&
 forecast_days=7&
-timezone=auto
-
-`;
+timezone=auto`;
   const responseOneDay = await fetch(urlOneDay);
   const responseSevenDays = await fetch(urlSevenDays);
   const dataJsonOneDay = await responseOneDay.json();
@@ -44,8 +145,9 @@ async function getSearch(query, isRunnable = true, count = 5) {
   const cityJson = await cityData.json();
   if (isRunnable) {
     return cityJson;
+  } else {
+    searchFunc(cityJson, query);
   }
-  searchFunc(cityJson, query);
 }
 async function searchFunc(cityJson, query) {
   search_container.innerHTML = "";
@@ -98,9 +200,9 @@ async function searchClick() {
           getWeather(
             latlong.latitude,
             latlong.longitude,
-            "celsius",
-            "mph",
-            "inch"
+            unitsGlobal,
+            speedUnit,
+            precipitation
           );
         },
         { once: true }
@@ -125,7 +227,7 @@ function findDayName(date) {
 }
 function getHourlyForecast(
   dataJsonSevenDays,
-  currentHour,
+  currentHour = 3,
   dataDays,
   weatherCodes
 ) {
@@ -135,17 +237,18 @@ function getHourlyForecast(
     dataJsonSevenDays.daily.time,
     weatherCodes
   );
-  let lastHour = currentHour + 8;
-  let hoursTemp = currentWeatherCode.days.slice(currentHour, lastHour);
+  let lastHour = 22;
+  let hoursTemp = currentWeatherCode.days.slice(currentHour, lastHour + 1);
   let hoursWeatherCode = currentWeatherCode.weatherCodesForDay.slice(
     currentHour,
-    lastHour
+    lastHour + 1
   );
 
   let hourArr = [];
-  for (let i = currentHour; i < lastHour; i++) {
+  for (let i = currentHour; i <= lastHour; i++) {
     hourArr.push(i);
   }
+
   return {
     hoursData: hoursTemp,
     weathercodes: hoursWeatherCode,
@@ -164,9 +267,13 @@ function helperDateFunc(currentDayName, dataDays, dailyDates, weatherCodes) {
       };
     }
   }
+
   return currHourlyData;
 }
 function renderHTML(data, dataSevenDays) {
+  // setTimeout(() => {
+  //   searchInput.value = "";
+  // }, 0);
   let cards = "";
   let cardsHourly = "";
   let weekDays = 7;
@@ -191,15 +298,13 @@ function renderHTML(data, dataSevenDays) {
     daysData.push(chunk);
     daysWeatherCode.push(chunk2);
   }
-  console.log(dataSevenDays);
 
   let currentHourlyForecastArr = getHourlyForecast(
     dataSevenDays,
-    currentDate,
+    15,
     daysData,
     daysWeatherCode
   );
-  console.log(currentHourlyForecastArr);
 
   dataSevenDays.daily.time.map((items, index) => {
     cards += `    
@@ -222,6 +327,8 @@ function renderHTML(data, dataSevenDays) {
                     </div>
                   </div>`;
   });
+  console.log(dataSevenDays);
+
   currentHourlyForecastArr.hoursData.map((items, index) => {
     cardsHourly += `
                   <div
@@ -236,7 +343,9 @@ function renderHTML(data, dataSevenDays) {
                     )}"
                     alt=""
                   />
-                  <p class="uppercase text-lg">5 pm</p>
+                  <p class="uppercase text-lg">${
+                    currentHourlyForecastArr.hours[index] % 12
+                  } PM</p>
                 </div>
                 <p class="mr-1">${items}°</p>
               </div>`;
@@ -358,18 +467,61 @@ function renderHTML(data, dataSevenDays) {
             class="font-DMSans rounded-lg px-4 py-3 mt-5 xl:mt-0 flex flex-col gap-y-3 min-h-full w-full xl:w-[30%] bg-Neutral800 lg:rounded-2xl"
           >
             <div class="flex items-center justify-between cursor-pointer">
-              <p class="font-[500] text-lg">Hourly Forecast</p>
+            <p class="font-[500] text-lg">Hourly Forecast</p>
+            <div class="relative" id="daydropdownBtn">
               <div
                 class="flex items-center px-3 py-[6px] gap-x-2 bg-Neutral600 rounded-md"
               >
-                <p>${"Tuesday"}</p>
-                <img src="assets/images/icon-dropdown.svg" alt="" />
+                <p id="currentDayName">${findDayName(
+                  dataSevenDays.current_weather.time
+                )}</p>
+                <img class="" data-dropdownIcon src="assets/images/icon-dropdown.svg" alt="" />
+              </div>
+              <div
+                class="absolute top-[45px] border border-Neutral600 bg-Neutral800 hidden right-0 p-2 rounded-lg w-[200px]" id="days-dropdown"
+              >
+                <h1 class="px-2 py-2 rounded-lg bg-Neutral700" data-daySelectionBtn>Monday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Tuesday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Wednesday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Thursday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Friday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Saturday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Sunday</h1>
               </div>
             </div>
+          </div>
             <div class="flex flex-col gap-y-4 mt-2">
               
               ${cardsHourly}
             </div>
           </div>
         </div>`;
+
+  let daydropdownBtn = document.querySelector("#daydropdownBtn");
+  let day_dropdown = document.querySelector("#days-dropdown");
+  let currentDayName = document.querySelector("#currentDayName");
+  daydropdownBtn.addEventListener("click", (e) => {
+    day_dropdown.classList.toggle("hidden");
+    document
+      .querySelector("#daydropdownBtn")
+      .querySelector("img")
+      .classList.toggle("rotate-180");
+  });
+
+  dropdownFunc(
+    day_dropdown,
+    document.querySelector("#daydropdownBtn").querySelector("img")
+  );
+  let dayBtns = document.querySelectorAll("[data-daySelectionBtn]");
+  dayBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      btn.classList.add("bg-Neutral700");
+      currentDayName.innerText = btn.innerText;
+      dayBtns.forEach((items) => {
+        if (btn !== items) {
+          items.classList.remove("bg-Neutral700");
+        }
+      });
+    });
+  });
 }
