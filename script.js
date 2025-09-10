@@ -13,6 +13,8 @@ const tempBtns = document.querySelectorAll("[data-tempBtns]");
 const speedBtns = document.querySelectorAll("[data-speedBtns]");
 const precipitationBtns = document.querySelectorAll("[data-precipitationBtns]");
 
+let daysData = [];
+let daysWeatherCode = [];
 let isAlreadyRendered = false;
 let metric_imperial = "metric";
 let unitsGlobal = "celsius";
@@ -229,10 +231,11 @@ function getHourlyForecast(
   dataJsonSevenDays,
   currentHour = 3,
   dataDays,
-  weatherCodes
+  weatherCodes,
+  selectedDate = dataJsonSevenDays.current_weather.time
 ) {
   let currentWeatherCode = helperDateFunc(
-    findDayName(dataJsonSevenDays.current_weather.time),
+    findDayName(selectedDate),
     dataDays,
     dataJsonSevenDays.daily.time,
     weatherCodes
@@ -270,15 +273,20 @@ function helperDateFunc(currentDayName, dataDays, dailyDates, weatherCodes) {
 
   return currHourlyData;
 }
+function getJsDate(dayName, dailyDates) {
+  return dailyDates.find((date) => {
+    const weekday = new Date(date).toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+    return weekday === dayName;
+  });
+}
 function renderHTML(data, dataSevenDays) {
-  // setTimeout(() => {
-  //   searchInput.value = "";
-  // }, 0);
+  // currentDayName, dataDays, dailyDates, weatherCodes
+  // findDayName(dataJsonSevenDays.current_weather.time), dataDays, dataJsonSevenDays.daily.time, weatherCodes;
   let cards = "";
   let cardsHourly = "";
   let weekDays = 7;
-  let daysData = [];
-  let daysWeatherCode = [];
 
   let weatherArr = {
     current_weather: data.current_weather,
@@ -303,7 +311,8 @@ function renderHTML(data, dataSevenDays) {
     dataSevenDays,
     15,
     daysData,
-    daysWeatherCode
+    daysWeatherCode,
+    dataSevenDays.current_weather.time
   );
 
   dataSevenDays.daily.time.map((items, index) => {
@@ -327,7 +336,34 @@ function renderHTML(data, dataSevenDays) {
                     </div>
                   </div>`;
   });
+
+  function selectDates(selectedDay) {
+    let findClickedDate = dataSevenDays.hourly.time.find((items) => {
+      return findDayName(items) == findDayName(selectedDay);
+    });
+    let indexOfClickedDay = dataSevenDays.hourly.time.indexOf(findClickedDate);
+    console.log(indexOfClickedDay);
+    console.log(indexOfClickedDay + 15);
+    let newHourlyForecast = getHourlyForecast(
+      dataSevenDays,
+      (indexOfClickedDay + 15) % 24,
+      daysData,
+      daysWeatherCode,
+      selectedDay
+    );
+
+    return newHourlyForecast;
+  }
   console.log(dataSevenDays);
+  console.log(selectDates(getJsDate("Saturday", dataSevenDays.daily.time)));
+
+  // console.log(dataSevenDays);
+  // let indexOfSelectedDate = dataSevenDays.daily.time.indexOf(
+  //   getJsDate("Friday", dataSevenDays.daily.time)
+  // );
+
+  // console.log(findDayName(dataSevenDays.current_weather.time));
+  // console.log(daysData, daysWeatherCode);
 
   currentHourlyForecastArr.hoursData.map((items, index) => {
     cardsHourly += `
@@ -481,7 +517,6 @@ function renderHTML(data, dataSevenDays) {
             </div>
           </div>
             <div class="flex flex-col gap-y-4 mt-2">
-              
               ${cardsHourly}
             </div>
           </div>
