@@ -357,21 +357,11 @@ function renderHTML(data, dataSevenDays) {
           id="all-info-container"
         >
           <div class="w-full xl:w-[70%] h-full">
-            <div class="h-full" id="weather-forecast-section">
+            <div class="h-full w-full" id="weather-forecast-section">
               <div
                 id="weather-layout-container"
                 class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('assets/images/bg-today-small.svg')] 600:bg-[url('assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
               >
-                <!-- <img
-                  class="absolute w-full 600:hidden top-0 left-0 object-cover -z-[200] h-full"
-                  src="assets/images/bg-today-small.svg"
-                  alt=""
-                />
-                <img
-                  class="absolute hidden 600:block h-full w-full top-0 left-0 object-cover -z-[200]"
-                  src="assets/images/bg-today-large.svg"
-                  alt=""
-                /> -->
                 <div
                   class="flex flex-col md:flex-row md:px-7 justify-between md:py-10 items-center mt-4 font-DMSans w-full"
                 >
