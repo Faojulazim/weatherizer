@@ -1,4 +1,3 @@
-import { data } from "browserslist";
 import { imageAlgorithm } from "./imageAlgorithm.js";
 import loading from "./loading.js";
 import errorCheck from "./error.js";
