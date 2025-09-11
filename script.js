@@ -191,15 +191,17 @@ searchInput.addEventListener("input", (e) => {
 });
 
 async function searchClick(err) {
-  const searchCard = document.querySelectorAll("[data-searchcard");
-  searchCard.forEach((cards) => {
-    cards.addEventListener("click", (e) => {
-      searchInput.value = cards.querySelector("h2").innerText;
-      selectedCity = cards.querySelector("h2").innerText;
-      searchCity = cards.id;
-      search_container.innerHTML = "";
-      search_container.classList.remove("p-2");
-    });
+  setTimeout(() => {
+    const searchCard = document.querySelectorAll("[data-searchcard");
+    searchCard.forEach((cards) => {
+      cards.addEventListener("click", (e) => {
+        searchInput.value = cards.querySelector("h2").innerText;
+        selectedCity = cards.querySelector("h2").innerText;
+        searchCity = cards.id;
+        search_container.innerHTML = "";
+        search_container.classList.remove("p-2");
+      });
+    }, 200);
   });
 }
 
@@ -389,7 +391,7 @@ function renderHTML(data, dataSevenDays) {
                       )}"
                       alt=""
                     />
-                    <h1 class="text-8xl font-[700] italic">
+                    <h1 class="text-6xl 375:text-7xl 500:text-8xl font-[700] italic">
                     ${weatherArr.current_weather.temperature}°</h1>
                   </div>
                 </div>
