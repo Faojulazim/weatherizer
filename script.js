@@ -27,6 +27,7 @@ let speedUnit = "kmh";
 let precipitation = "mm";
 let searchCityPrev = "";
 let searchCity = "";
+let selectedCity = "";
 let latlong;
 
 await errorCheck();
@@ -194,10 +195,10 @@ async function searchClick(err) {
   searchCard.forEach((cards) => {
     cards.addEventListener("click", (e) => {
       searchInput.value = cards.querySelector("h2").innerText;
+      selectedCity = cards.querySelector("h2").innerText;
+      searchCity = cards.id;
       search_container.innerHTML = "";
       search_container.classList.remove("p-2");
-      searchCityPrev = searchCity;
-      searchCity = cards.id;
     });
   });
 }
@@ -216,7 +217,9 @@ searchBtn.addEventListener("click", async (e) => {
   } else {
     loading(false);
   }
-  let searchTag = await getSearch(searchCity, 1, true);
+  searchCityPrev = searchCity;
+
+  let searchTag = await getSearch(searchCity, true, 1);
   latlong = {
     latitude: searchTag.results[0].latitude,
     longitude: searchTag.results[0].longitude,
@@ -364,7 +367,7 @@ function renderHTML(data, dataSevenDays) {
                     class="flex flex-col gap-y-1 md:gap-y-2 items-center md:items-start"
                   >
                     <h1 class="font-[600] text-3xl md:text-4xl">
-                      ${searchInput.value}
+                      ${selectedCity}
                     </h1>
 
                     <p class="md:text-lg">${new Date(

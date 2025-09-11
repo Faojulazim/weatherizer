@@ -294,5 +294,5 @@ export default function loading(isLoaded) {
           </div>
         </div>
       </div>
-    </div>;`;
+    </div>`;
 }
