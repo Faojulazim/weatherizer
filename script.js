@@ -445,15 +445,15 @@ function renderHTML(data, dataSevenDays) {
                 <p class="font-[500] text-lg">Daily Forecast</p>
                 <div
                   id="forecast-container"
-                  class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(4,minmax(50px,1fr))] 500:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
+                  class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(3,minmax(50px,1fr))] 500:grid-cols-[repeat(4,minmax(50px,1fr))] 
+                  600:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
                 >     
                 ${cards}
                 </div>
               </div>
             </div>
           </div>
-          <div
-            id="forecast-info-container"
+          <div id="hourlyForecast"
             class="font-DMSans rounded-lg px-4 py-3 mt-5 xl:mt-0 flex flex-col gap-y-3 min-h-full w-full xl:w-[30%] bg-Neutral800 lg:rounded-2xl"
           >
             <div class="flex items-center justify-between cursor-pointer">

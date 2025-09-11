@@ -89,7 +89,8 @@ export default function loading(isLoaded) {
             <p class="font-[500] text-lg">Daily Forecast</p>
             <div
               id="forecast-container"
-              class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(4,minmax(50px,1fr))] 500:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
+              class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(3,minmax(50px,1fr))] 500:grid-cols-[repeat(4,minmax(50px,1fr))] 
+                  600:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
             >
               <div class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3">
                 <p class="text-lg invisible">Tue</p>
