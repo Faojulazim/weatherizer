@@ -1,0 +1,97 @@
+
+  // for (let i = 0; i < weekDays; i++) {
+  //   let chunk = dataSevenDays.hourly.temperature_2m.slice(i * 24, (i + 1) * 24);
+  //   let chunk2 = dataSevenDays.hourly.weathercode.slice(i * 24, (i + 1) * 24);
+  //   daysData.push(chunk);
+  //   daysWeatherCode.push(chunk2);
+  // }
+
+  // function getHourlyForecast(
+//   dataJsonSevenDays,
+//   currentHour = 3,
+//   dataDays,
+//   weatherCodes,
+//   selectedDate = dataJsonSevenDays.current_weather.time
+// ) {
+//   let currentWeatherCode = helperDateFunc(
+//     findDayName(selectedDate),
+//     dataDays,
+//     dataJsonSevenDays.daily.time,
+//     weatherCodes
+//   );
+//   let lastHour = 22;
+//   // console.log(currentWeatherCode);
+
+//   let hoursTemp = currentWeatherCode.days.slice(currentHour, lastHour + 1);
+//   let hoursWeatherCode = currentWeatherCode.weatherCodesForDay.slice(
+//     currentHour,
+//     lastHour + 1
+//   );
+
+//   let hourArr = [];
+//   for (let i = currentHour; i <= lastHour; i++) {
+//     hourArr.push(i);
+//   }
+
+//   console.log(currentWeatherCode);
+
+//   return {
+//     hoursData: hoursTemp,
+//     weathercodes: hoursWeatherCode,
+//     hours: hourArr,
+//   };
+// }
+
+// function helperDateFunc(currentDayName, dataDays, dailyDates, weatherCodes) {
+//   let currHourlyData;
+
+//   for (let i = 0; i < dataDays.length; i++) {
+//     if (currentDayName === findDayName(dailyDates[i])) {
+//       currHourlyData = {
+//         days: dataDays[i],
+//         weatherCodesForDay: weatherCodes[i],
+//       };
+//     }
+//   }
+
+//   return currHourlyData;
+// }
+
+
+// function selectDates(selectedDay) {
+  //   let findClickedDate = dataSevenDays.hourly.time.find((items) => {
+  //     return findDayName(items) == findDayName(selectedDay);
+  //   });
+  //   console.log(findDayName(findClickedDate));
+
+  //   let indexOfClickedDay = dataSevenDays.hourly.time.indexOf(findClickedDate);
+
+  //   console.log(indexOfClickedDay);
+  //   console.log(indexOfClickedDay + 15);
+  //   // let newHourlyForecast = getHourlyForecast(
+  //   //   dataSevenDays,
+  //   //   (indexOfClickedDay + 15) % 24,
+  //   //   daysData,
+  //   //   daysWeatherCode,
+  //   //   selectedDay
+  //   // );
+
+  //   // return newHourlyForecast;
+  // }
+  // // console.log(dataSevenDays);
+  // selectDates(getJsDate("Friday", dataSevenDays.daily.time));
+
+  // console.log(dataSevenDays);
+  // let dayMatch = new Date("2025-09-12").toLocaleDateString("en-US", {
+  //   weekday: "long",
+  // });
+  // console.log(dayMatch); // "Friday"
+  // console.log(getJsDate("Wednesday", dataSevenDays.daily.time));
+
+  // let indexOfSelectedDate = dataSevenDays.daily.time.indexOf(
+  //   getJsDate("Friday", dataSevenDays.daily.time)
+  // );
+  // console.log(indexOfSelectedDate);
+
+  // console.log(findDayName(dataSevenDays.current_weather.time));
+  // console.log(daysData, daysWeatherCode);

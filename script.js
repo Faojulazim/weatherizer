@@ -1,6 +1,7 @@
+import { data } from "browserslist";
 import { imageAlgorithm } from "./imageAlgorithm.js";
-// Imperial (°F (Fahrenheit))
-// Metric (°C (Celsius)))
+import loading from "./loading.js";
+
 const searchInput = document.querySelector("#searchInput");
 const searchBtn = document.querySelector("#searchBtn");
 const all_info_wrapper = document.querySelector("#all-info-wrapper");
@@ -13,6 +14,10 @@ const tempBtns = document.querySelectorAll("[data-tempBtns]");
 const speedBtns = document.querySelectorAll("[data-speedBtns]");
 const precipitationBtns = document.querySelectorAll("[data-precipitationBtns]");
 
+let startingIndex = 15;
+let endingIndex = 23;
+let todayNow = "";
+let today = "";
 let daysData = [];
 let daysWeatherCode = [];
 let isAlreadyRendered = false;
@@ -20,6 +25,7 @@ let metric_imperial = "metric";
 let unitsGlobal = "celsius";
 let speedUnit = "kmh";
 let precipitation = "mm";
+let searchCityPrev = "";
 let searchCity = "";
 let latlong;
 
@@ -137,6 +143,8 @@ timezone=auto`;
   const responseSevenDays = await fetch(urlSevenDays);
   const dataJsonOneDay = await responseOneDay.json();
   const dataJsonSevenDays = await responseSevenDays.json();
+  // console.log(responseOneDay.ok);
+
   renderHTML(dataJsonOneDay, dataJsonSevenDays);
 }
 async function getSearch(query, isRunnable = true, count = 5) {
@@ -187,25 +195,41 @@ async function searchClick() {
   searchCard.forEach((cards) => {
     cards.addEventListener("click", (e) => {
       searchInput.value = cards.querySelector("h2").innerText;
-      searchCity = cards.id;
+
       search_container.innerHTML = "";
       search_container.classList.remove("p-2");
       const searchBtn = document.querySelector("#searchBtn");
       searchBtn.addEventListener(
         "click",
         async (e) => {
+          searchCityPrev = searchCity;
+          searchCity = cards.id;
+          if (searchCityPrev) {
+            if (
+              searchCity.trim().replaceAll(" ", "").toLowerCase() ==
+              searchCityPrev.trim().replaceAll(" ", "").toLowerCase()
+            ) {
+              loading(true);
+            } else {
+              loading(false);
+            }
+          } else {
+            loading(false);
+          }
           let searchTag = await getSearch(cards.id, 1, true);
           latlong = {
             latitude: searchTag.results[0].latitude,
             longitude: searchTag.results[0].longitude,
           };
-          getWeather(
-            latlong.latitude,
-            latlong.longitude,
-            unitsGlobal,
-            speedUnit,
-            precipitation
-          );
+          setTimeout(() => {
+            getWeather(
+              latlong.latitude,
+              latlong.longitude,
+              unitsGlobal,
+              speedUnit,
+              precipitation
+            );
+          }, 500);
         },
         { once: true }
       );
@@ -227,31 +251,19 @@ function findDayName(date) {
   });
   return dayName;
 }
-function getHourlyForecast(
-  dataJsonSevenDays,
-  currentHour = 3,
-  dataDays,
-  weatherCodes,
-  selectedDate = dataJsonSevenDays.current_weather.time
-) {
-  let currentWeatherCode = helperDateFunc(
-    findDayName(selectedDate),
-    dataDays,
-    dataJsonSevenDays.daily.time,
-    weatherCodes
+function getHourlyForecast(dataJsonSevenDays, startingIndex, endingIndex) {
+  let hoursTemp = dataJsonSevenDays.hourly.temperature_2m.slice(
+    startingIndex,
+    endingIndex
   );
-  let lastHour = 22;
-  let hoursTemp = currentWeatherCode.days.slice(currentHour, lastHour + 1);
-  let hoursWeatherCode = currentWeatherCode.weatherCodesForDay.slice(
-    currentHour,
-    lastHour + 1
+  let hoursWeatherCode = dataJsonSevenDays.hourly.weathercode.slice(
+    startingIndex,
+    endingIndex
   );
-
   let hourArr = [];
-  for (let i = currentHour; i <= lastHour; i++) {
+  for (let i = startingIndex; i < endingIndex; i++) {
     hourArr.push(i);
   }
-
   return {
     hoursData: hoursTemp,
     weathercodes: hoursWeatherCode,
@@ -259,20 +271,6 @@ function getHourlyForecast(
   };
 }
 
-function helperDateFunc(currentDayName, dataDays, dailyDates, weatherCodes) {
-  let currHourlyData;
-
-  for (let i = 0; i < dataDays.length; i++) {
-    if (currentDayName === findDayName(dailyDates[i])) {
-      currHourlyData = {
-        days: dataDays[i],
-        weatherCodesForDay: weatherCodes[i],
-      };
-    }
-  }
-
-  return currHourlyData;
-}
 function getJsDate(dayName, dailyDates) {
   return dailyDates.find((date) => {
     const weekday = new Date(date).toLocaleDateString("en-US", {
@@ -281,12 +279,12 @@ function getJsDate(dayName, dailyDates) {
     return weekday === dayName;
   });
 }
+
 function renderHTML(data, dataSevenDays) {
-  // currentDayName, dataDays, dailyDates, weatherCodes
-  // findDayName(dataJsonSevenDays.current_weather.time), dataDays, dataJsonSevenDays.daily.time, weatherCodes;
+  daysData = [];
+  daysWeatherCode = [];
   let cards = "";
   let cardsHourly = "";
-  let weekDays = 7;
 
   let weatherArr = {
     current_weather: data.current_weather,
@@ -299,26 +297,14 @@ function renderHTML(data, dataSevenDays) {
   };
 
   let currentDate = new Date(weatherArr.current_weather.time).getHours();
-
-  for (let i = 0; i < weekDays; i++) {
-    let chunk = dataSevenDays.hourly.temperature_2m.slice(i * 24, (i + 1) * 24);
-    let chunk2 = dataSevenDays.hourly.weathercode.slice(i * 24, (i + 1) * 24);
-    daysData.push(chunk);
-    daysWeatherCode.push(chunk2);
-  }
-
   let currentHourlyForecastArr = getHourlyForecast(
     dataSevenDays,
-    15,
-    daysData,
-    daysWeatherCode,
-    dataSevenDays.current_weather.time
+    startingIndex,
+    endingIndex
   );
-
   dataSevenDays.daily.time.map((items, index) => {
-    cards += `    
-                  <div
-                  class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+    cards += `<div
+                  class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">${findDayName(items).slice(0, 3)}</p>
                     <img
@@ -336,35 +322,13 @@ function renderHTML(data, dataSevenDays) {
                     </div>
                   </div>`;
   });
-
-  function selectDates(selectedDay) {
-    let findClickedDate = dataSevenDays.hourly.time.find((items) => {
-      return findDayName(items) == findDayName(selectedDay);
-    });
-    let indexOfClickedDay = dataSevenDays.hourly.time.indexOf(findClickedDate);
-    console.log(indexOfClickedDay);
-    console.log(indexOfClickedDay + 15);
-    let newHourlyForecast = getHourlyForecast(
-      dataSevenDays,
-      (indexOfClickedDay + 15) % 24,
-      daysData,
-      daysWeatherCode,
-      selectedDay
-    );
-
-    return newHourlyForecast;
-  }
-  console.log(dataSevenDays);
-  console.log(selectDates(getJsDate("Saturday", dataSevenDays.daily.time)));
-
-  // console.log(dataSevenDays);
-  // let indexOfSelectedDate = dataSevenDays.daily.time.indexOf(
-  //   getJsDate("Friday", dataSevenDays.daily.time)
+  // console.log(
+  //   dataSevenDays.hourly.temperature_2m,
+  //   dataSevenDays.hourly.weathercode
   // );
+  // console.log("startingIndex:" + startingIndex, "endingIndex:" + endingIndex);
 
-  // console.log(findDayName(dataSevenDays.current_weather.time));
-  // console.log(daysData, daysWeatherCode);
-
+  // console.log(currentHourlyForecastArr);
   currentHourlyForecastArr.hoursData.map((items, index) => {
     cardsHourly += `
                   <div
@@ -439,7 +403,7 @@ function renderHTML(data, dataSevenDays) {
               >
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Feels Like</h3>
                   <h1 class="text-3xl text-white">${getHours(
@@ -449,7 +413,7 @@ function renderHTML(data, dataSevenDays) {
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Humidity</h3>
                   <h1 class="text-3xl text-white">${getHours(
@@ -459,7 +423,7 @@ function renderHTML(data, dataSevenDays) {
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Wind</h3>
                   <h1 class="text-3xl text-white">
@@ -468,7 +432,7 @@ function renderHTML(data, dataSevenDays) {
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Precipitation</h3>
                   <h1 class="text-3xl text-white">${
@@ -498,15 +462,17 @@ function renderHTML(data, dataSevenDays) {
               <div
                 class="flex items-center px-3 py-[6px] gap-x-2 bg-Neutral600 rounded-md"
               >
-                <p id="currentDayName">${findDayName(
-                  dataSevenDays.current_weather.time
-                )}</p>
+                <p id="currentDayName">${
+                  today
+                    ? today
+                    : findDayName(dataSevenDays.current_weather.time)
+                }</p>
                 <img class="" data-dropdownIcon src="assets/images/icon-dropdown.svg" alt="" />
               </div>
               <div
                 class="absolute top-[45px] border border-Neutral600 bg-Neutral800 hidden right-0 p-2 rounded-lg w-[200px]" id="days-dropdown"
               >
-                <h1 class="px-2 py-2 rounded-lg bg-Neutral700" data-daySelectionBtn>Monday</h1>
+                <h1 class="px-2 py-2 rounded-lg " data-daySelectionBtn>Monday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Tuesday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Wednesday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Thursday</h1>
@@ -525,6 +491,7 @@ function renderHTML(data, dataSevenDays) {
   let daydropdownBtn = document.querySelector("#daydropdownBtn");
   let day_dropdown = document.querySelector("#days-dropdown");
   let currentDayName = document.querySelector("#currentDayName");
+  let daySelectionBtns = document.querySelectorAll("[data-daySelectionBtn]");
   daydropdownBtn.addEventListener("click", (e) => {
     day_dropdown.classList.toggle("hidden");
     document
@@ -547,6 +514,19 @@ function renderHTML(data, dataSevenDays) {
           items.classList.remove("bg-Neutral700");
         }
       });
+    });
+  });
+  daySelectionBtns.forEach((items) => {
+    items.addEventListener("click", (e) => {
+      today = items.innerText;
+      const clickedDateData = getJsDate(today, dataSevenDays.daily.time);
+      const indexOfClickedDate = dataSevenDays.hourly.time.indexOf(
+        clickedDateData + "T15:00"
+      );
+      const indexOfClickedDateEnd = indexOfClickedDate + 8;
+      startingIndex = Number(indexOfClickedDate);
+      endingIndex = Number(indexOfClickedDateEnd);
+      helperFuncForBtns();
     });
   });
 }

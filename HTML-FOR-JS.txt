@@ -48,28 +48,28 @@
               >
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Feels Like</h3>
                   <h1 class="text-3xl text-white">18°</h1>
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Humidity</h3>
                   <h1 class="text-3xl text-white">46%</h1>
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Wind</h3>
                   <h1 class="text-3xl text-white">14 km/h</h1>
                 </div>
                 <div
                   id="card"
-                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral200/20 px-4 py-3 rounded-lg border border-Neutral300/20"
+                  class="flex flex-col gap-y-4 text-Neutral200 bg-Neutral800 px-4 py-3 rounded-lg border border-Neutral300/20"
                 >
                   <h3 class="text-lg">Precipitation</h3>
                   <h1 class="text-3xl text-white">0 mm</h1>
@@ -82,7 +82,7 @@
                   class="mt-3 grid grid-cols-[repeat(3,minmax(50px,1fr))] 425:grid-cols-[repeat(4,minmax(50px,1fr))] 500:grid-cols-[repeat(5,minmax(50px,1fr))] md:grid-cols-[repeat(7,minmax(50px,1fr))] gap-4"
                 >
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Tue</p>
                     <img
@@ -96,7 +96,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Wed</p>
                     <img
@@ -110,7 +110,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Thu</p>
                     <img
@@ -124,7 +124,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Fri</p>
                     <img
@@ -138,7 +138,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Sat</p>
                     <img
@@ -152,7 +152,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Sun</p>
                     <img
@@ -166,7 +166,7 @@
                     </div>
                   </div>
                   <div
-                    class="flex flex-col items-center bg-Neutral200/15 border-Neutral300/20 border rounded-lg p-3"
+                    class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
                   >
                     <p class="text-lg">Mon</p>
                     <img
