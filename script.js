@@ -1,7 +1,7 @@
 import { data } from "browserslist";
 import { imageAlgorithm } from "./imageAlgorithm.js";
 import loading from "./loading.js";
-
+import errorCheck from "./error.js";
 const searchInput = document.querySelector("#searchInput");
 const searchBtn = document.querySelector("#searchBtn");
 const all_info_wrapper = document.querySelector("#all-info-wrapper");
@@ -13,7 +13,8 @@ const dropdownIcon = document.querySelectorAll("[data-dropdownIcon]");
 const tempBtns = document.querySelectorAll("[data-tempBtns]");
 const speedBtns = document.querySelectorAll("[data-speedBtns]");
 const precipitationBtns = document.querySelectorAll("[data-precipitationBtns]");
-
+const searchDiv = document.querySelector("#searchDiv");
+const errorDiv = document.querySelector("#errorDiv");
 let startingIndex = 15;
 let endingIndex = 23;
 let todayNow = "";
@@ -29,6 +30,8 @@ let searchCityPrev = "";
 let searchCity = "";
 let latlong;
 
+await errorCheck();
+
 function btnForeach(btns, btnCategory) {
   btns.forEach((btn) => {
     btn.addEventListener("click", async (e) => {
@@ -42,18 +45,12 @@ function btnForeach(btns, btnCategory) {
         precipitation = btn.id;
         helperFuncForBtns();
       }
-      btn.classList.add("bg-Neutral700");
-      btn.querySelector("#checkmark").classList.remove("hidden");
-      btns.forEach((items) => {
-        if (btn !== items) {
-          items.classList.remove("bg-Neutral700");
-          items.querySelector("#checkmark").classList.add("hidden");
-        }
-      });
+      updateButtonGroup(btns, btn.id);
     });
   });
 }
-async function helperFuncForBtns() {
+async function helperFuncForBtns(err) {
+  if (err) return;
   if (searchCity) {
     const searchedData = await getSearch(searchCity, true, 1);
     getWeather(
@@ -65,9 +62,11 @@ async function helperFuncForBtns() {
     );
   }
 }
+
 btnForeach(tempBtns, "temperature");
 btnForeach(speedBtns, "speed");
 btnForeach(precipitationBtns, "precipitation");
+
 function helperParameterFunc(unit) {
   metric_imperial = unit;
   unitsGlobal = unit == "imperial" ? "fahrenheit" : "celsius";
@@ -78,16 +77,13 @@ function helperParameterFunc(unit) {
   updateButtonGroup(precipitationBtns, precipitation);
 }
 switchUnits.addEventListener("click", async (e) => {
-  if (metric_imperial == "metric") {
-    helperParameterFunc("imperial");
-  } else if (metric_imperial == "imperial") {
-    helperParameterFunc("metric");
-  }
+  helperParameterFunc(metric_imperial === "metric" ? "imperial" : "metric");
   switchUnits.innerText = `Switch to ${
     metric_imperial === "metric" ? "Imperial" : "Metric"
   }`;
   helperFuncForBtns();
 });
+
 function updateButtonGroup(btns, activeId) {
   btns.forEach((btn) => {
     const checkmark = btn.querySelector("#checkmark");
@@ -100,12 +96,14 @@ function updateButtonGroup(btns, activeId) {
     }
   });
 }
+
 unit_button.addEventListener("click", (e) => {
   units_dropdown.classList.toggle("hidden");
   document
     .querySelector("#firstButtonDropdownIcon")
     .classList.toggle("rotate-180");
 });
+
 function dropdownFunc(dropdownDiv, secondIcon) {
   document.body.addEventListener("click", (e) => {
     if (
@@ -126,6 +124,7 @@ function dropdownFunc(dropdownDiv, secondIcon) {
   });
 }
 dropdownFunc(units_dropdown);
+
 async function getWeather(lat, lon, tempUnit, speedUnit, precipitation) {
   const urlOneDay = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,apparent_temperature,precipitation,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_hours,wind_speed_10m_max&temperature_unit=${tempUnit}&wind_speed_unit=${speedUnit}&precipitation_unit=${precipitation}&forecast_days=1&timezone=auto
 `;
@@ -139,42 +138,44 @@ wind_speed_unit=${speedUnit}&
 precipitation_unit=${precipitation}&
 forecast_days=7&
 timezone=auto`;
-  const responseOneDay = await fetch(urlOneDay);
-  const responseSevenDays = await fetch(urlSevenDays);
+  const [responseOneDay, responseSevenDays] = await Promise.all([
+    fetch(urlOneDay),
+    fetch(urlSevenDays),
+  ]);
   const dataJsonOneDay = await responseOneDay.json();
   const dataJsonSevenDays = await responseSevenDays.json();
-  // console.log(responseOneDay.ok);
-
   renderHTML(dataJsonOneDay, dataJsonSevenDays);
 }
+
 async function getSearch(query, isRunnable = true, count = 5) {
   const city = `https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=${Number(
     count
   )}`;
   const cityData = await fetch(city);
   const cityJson = await cityData.json();
-  if (isRunnable) {
-    return cityJson;
-  } else {
-    searchFunc(cityJson, query);
-  }
+  if (isRunnable) return cityJson;
+  searchFunc(cityJson, query);
 }
+
 async function searchFunc(cityJson, query) {
   search_container.innerHTML = "";
   let searchHTML = "";
   if (cityJson.results) {
     search_container.classList.add("p-2");
-    cityJson.results.forEach((items) => {
-      searchHTML += `
-      <div id="${items.name}"
-        data-searchcard
-          class="px-5 py-2 cursor-pointer rounded-lg hover:bg-Neutral700 border border-Neutral800 hover:border-Neutral600 transition-all"
-        >
-        <h2>${items.name}, ${items.country}</h2>
-      </div>`;
-      search_container.innerHTML = searchHTML;
-      searchClick();
-    });
+    searchHTML += cityJson.results
+      .map(
+        (item) => `
+    <div id="${item.name}"
+      data-searchcard
+      class="px-5 py-2 cursor-pointer rounded-lg hover:bg-Neutral700 border border-Neutral800 hover:border-Neutral600 transition-all"
+    >
+      <h2>${item.name}, ${item.country}</h2>
+    </div>`
+      )
+      .join("");
+    search_container.innerHTML = searchHTML;
+
+    searchClick();
   } else {
     search_container.classList.remove("p-2");
   }
@@ -183,59 +184,55 @@ async function searchFunc(cityJson, query) {
 searchInput.addEventListener("input", (e) => {
   if (!e.target.value) {
     search_container.classList.remove("p-2");
+    search_container.innerHTML = "";
     return;
   }
-  setTimeout(() => {
-    getSearch(e.target.value, false);
-  }, 100);
+  getSearch(e.target.value, false);
 });
 
-async function searchClick() {
+async function searchClick(err) {
   const searchCard = document.querySelectorAll("[data-searchcard");
   searchCard.forEach((cards) => {
     cards.addEventListener("click", (e) => {
       searchInput.value = cards.querySelector("h2").innerText;
-
       search_container.innerHTML = "";
       search_container.classList.remove("p-2");
-      const searchBtn = document.querySelector("#searchBtn");
-      searchBtn.addEventListener(
-        "click",
-        async (e) => {
-          searchCityPrev = searchCity;
-          searchCity = cards.id;
-          if (searchCityPrev) {
-            if (
-              searchCity.trim().replaceAll(" ", "").toLowerCase() ==
-              searchCityPrev.trim().replaceAll(" ", "").toLowerCase()
-            ) {
-              loading(true);
-            } else {
-              loading(false);
-            }
-          } else {
-            loading(false);
-          }
-          let searchTag = await getSearch(cards.id, 1, true);
-          latlong = {
-            latitude: searchTag.results[0].latitude,
-            longitude: searchTag.results[0].longitude,
-          };
-          setTimeout(() => {
-            getWeather(
-              latlong.latitude,
-              latlong.longitude,
-              unitsGlobal,
-              speedUnit,
-              precipitation
-            );
-          }, 500);
-        },
-        { once: true }
-      );
+      searchCityPrev = searchCity;
+      searchCity = cards.id;
     });
   });
 }
+
+searchBtn.addEventListener("click", async (e) => {
+  if (!searchCity) return;
+  if (searchCityPrev) {
+    if (
+      searchCity.trim().replaceAll(" ", "").toLowerCase() ==
+      searchCityPrev.trim().replaceAll(" ", "").toLowerCase()
+    ) {
+      loading(true);
+    } else {
+      loading(false);
+    }
+  } else {
+    loading(false);
+  }
+  let searchTag = await getSearch(searchCity, 1, true);
+  latlong = {
+    latitude: searchTag.results[0].latitude,
+    longitude: searchTag.results[0].longitude,
+  };
+  setTimeout(() => {
+    getWeather(
+      latlong.latitude,
+      latlong.longitude,
+      unitsGlobal,
+      speedUnit,
+      precipitation
+    );
+  }, 500);
+});
+
 function getHours(currentDate, weatherFind) {
   let currentVal;
   for (let i = 0; i <= weatherFind.length; i++) {
@@ -245,12 +242,14 @@ function getHours(currentDate, weatherFind) {
   }
   return currentVal;
 }
+
 function findDayName(date) {
   const dayName = new Date(date).toLocaleDateString("en-US", {
     weekday: "long",
   });
   return dayName;
 }
+
 function getHourlyForecast(dataJsonSevenDays, startingIndex, endingIndex) {
   let hoursTemp = dataJsonSevenDays.hourly.temperature_2m.slice(
     startingIndex,
@@ -297,11 +296,13 @@ function renderHTML(data, dataSevenDays) {
   };
 
   let currentDate = new Date(weatherArr.current_weather.time).getHours();
+
   let currentHourlyForecastArr = getHourlyForecast(
     dataSevenDays,
     startingIndex,
     endingIndex
   );
+
   dataSevenDays.daily.time.map((items, index) => {
     cards += `<div
                   class="flex flex-col items-center bg-Neutral800 border-Neutral300/20 border rounded-lg p-3"
@@ -322,13 +323,7 @@ function renderHTML(data, dataSevenDays) {
                     </div>
                   </div>`;
   });
-  // console.log(
-  //   dataSevenDays.hourly.temperature_2m,
-  //   dataSevenDays.hourly.weathercode
-  // );
-  // console.log("startingIndex:" + startingIndex, "endingIndex:" + endingIndex);
 
-  // console.log(currentHourlyForecastArr);
   currentHourlyForecastArr.hoursData.map((items, index) => {
     cardsHourly += `
                   <div
@@ -504,6 +499,7 @@ function renderHTML(data, dataSevenDays) {
     day_dropdown,
     document.querySelector("#daydropdownBtn").querySelector("img")
   );
+
   let dayBtns = document.querySelectorAll("[data-daySelectionBtn]");
   dayBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -516,6 +512,7 @@ function renderHTML(data, dataSevenDays) {
       });
     });
   });
+
   daySelectionBtns.forEach((items) => {
     items.addEventListener("click", (e) => {
       today = items.innerText;

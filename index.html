@@ -10,7 +10,7 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dist/style.css" />
     <title>Frontend Mentor | Weather app</title>
   </head>
   <body
@@ -150,49 +150,72 @@
           </div>
         </div>
       </nav>
-      <div>
-        <h1
-          class="text-6xl 500:text-7xl mt-14 md:mt-20 font-[700] text-center max-w-[800px] lg:max-w-none mx-auto"
-        >
-          How's the sky looking today?
-        </h1>
+      <div id="errorHandler" class="w-full" aria-colspan="">
         <div
-          id="search-bar"
-          class="mt-10 md:mt-14 flex flex-col gap-y-3 650:flex-row 650:gap-x-5 max-w-[700px] mx-auto"
+          id="errorDiv"
+          class="flex items-center flex-col gap-y-5 text-center max-w-[500px] mx-auto mt-20 hidden"
         >
-          <div class="relative flex items-center 650:w-full">
-            <div class="w-full relative">
-              <div class="w-full flex items-center">
-                <img
-                  class="absolute left-5"
-                  src="assets/images/icon-search.svg"
-                  alt=""
-                />
-                <input
-                  class="bg-Neutral800 w-full px-14 py-3 500:py-4 rounded-lg outline-none"
-                  type="text"
-                  name=""
-                  autocomplete="off"
-                  placeholder="Search for a place..."
-                  id="searchInput"
-                />
-              </div>
-              <div
-                id="search-container"
-                class="bg-Neutral800 absolute top-[46px] 500:top-[55px] rounded-lg mt-3 z-[200] w-full"
-              ></div>
-            </div>
-          </div>
+          <img class="w-[40px]" src="assets/images/icon-error.svg" alt="" />
+          <h1 class="font-[700] text-[2.8rem] leading-none">
+            Something went wrong
+          </h1>
+          <p class="text-lg">
+            We couldn’t connect to the server (API error). Please try again in a
+            few moments.
+          </p>
           <button
-            class="w-full bg-Blue500 py-[10px] rounded-lg 500:py-[14px] 650:w-auto px-7 hover:bg-Blue700 transition-all"
-            id="searchBtn"
+            class="flex items-center gap-x-3 bg-Neutral800 px-5 py-2 rounded-lg"
+            id="retryBtn"
           >
-            Search
+            <img src="assets/images/icon-retry.svg" alt="" />
+            Retry
           </button>
+        </div>
+        <div id="searchDiv">
+          <h1
+            class="text-6xl 500:text-7xl mt-14 md:mt-20 font-[700] text-center max-w-[800px] lg:max-w-none mx-auto"
+          >
+            How's the sky looking today?
+          </h1>
+          <div
+            id="search-bar"
+            class="mt-10 md:mt-14 flex flex-col gap-y-3 650:flex-row 650:gap-x-5 max-w-[700px] mx-auto"
+          >
+            <div class="relative flex items-center 650:w-full">
+              <div class="w-full relative">
+                <div class="w-full flex items-center">
+                  <img
+                    class="absolute left-5"
+                    src="assets/images/icon-search.svg"
+                    alt=""
+                  />
+                  <input
+                    class="bg-Neutral800 w-full px-14 py-3 500:py-4 rounded-lg outline-none"
+                    type="text"
+                    name=""
+                    autocomplete="off"
+                    placeholder="Search for a place..."
+                    id="searchInput"
+                  />
+                </div>
+                <div
+                  id="search-container"
+                  class="bg-Neutral800 absolute top-[46px] 500:top-[55px] rounded-lg mt-3 z-[200] w-full"
+                ></div>
+              </div>
+            </div>
+            <button
+              class="w-full bg-Blue500 py-[10px] rounded-lg 500:py-[14px] 650:w-auto px-7 hover:bg-Blue700 transition-all"
+              id="searchBtn"
+            >
+              Search
+            </button>
+          </div>
         </div>
       </div>
       <div id="all-info-wrapper"></div>
     </div>
     <script type="module" src="script.js"></script>
+    <!-- <script type="module" src="error.js"></script> -->
   </body>
 </html>
