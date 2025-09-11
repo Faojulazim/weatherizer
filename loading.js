@@ -9,7 +9,7 @@ export default function loading(isLoaded) {
         <div class="h-full" id="weather-forecast-section">
           <div
             id="weather-layout-container"
-            class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('assets/images/bg-today-small.svg')] 600:bg-[url('assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
+            class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('../assets/images/bg-today-small.svg')] 600:bg-[url('../assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
           >
             <div id="loading-state">
               <div class="absolute inset-0 z-[2000] pointer-events-none w-full h-full bg-Neutral800">

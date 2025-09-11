@@ -354,7 +354,7 @@ function renderHTML(data, dataSevenDays) {
             <div class="h-full w-full" id="weather-forecast-section">
               <div
                 id="weather-layout-container"
-                class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('assets/images/bg-today-small.svg')] 600:bg-[url('assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
+                class="flex flex-col items-center justify-center mt-7 xl:mt-0 relative rounded-2xl py-10 overflow-hidden w-full bg-[url('../assets/images/bg-today-small.svg')] 600:bg-[url('../assets/images/bg-today-large.svg')] bg-cover bg-[0_90%] 600:bg-[0%_60%] bg-no-repeat h-full"
               >
                 <div
                   class="flex flex-col md:flex-row md:px-7 justify-between md:py-10 items-center mt-4 font-DMSans w-full"
