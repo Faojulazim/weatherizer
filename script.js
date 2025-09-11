@@ -1,6 +1,7 @@
 import { imageAlgorithm } from "./imageAlgorithm.js";
 import loading from "./loading.js";
 import errorCheck from "./error.js";
+
 const searchInput = document.querySelector("#searchInput");
 const searchBtn = document.querySelector("#searchBtn");
 const all_info_wrapper = document.querySelector("#all-info-wrapper");
@@ -14,6 +15,7 @@ const speedBtns = document.querySelectorAll("[data-speedBtns]");
 const precipitationBtns = document.querySelectorAll("[data-precipitationBtns]");
 const searchDiv = document.querySelector("#searchDiv");
 const errorDiv = document.querySelector("#errorDiv");
+
 let startingIndex = 15;
 let endingIndex = 23;
 let todayNow = "";
@@ -49,6 +51,7 @@ function btnForeach(btns, btnCategory) {
     });
   });
 }
+
 async function helperFuncForBtns(err) {
   if (err) return;
   if (searchCity) {
@@ -368,7 +371,7 @@ function renderHTML(data, dataSevenDays) {
                     id="primary-card"
                     class="flex flex-col gap-y-1 md:gap-y-2 items-center md:items-start"
                   >
-                    <h1 class="font-[600] text-3xl md:text-4xl">
+                    <h1 class="font-[600] text-center text-3xl md:text-4xl">
                       ${selectedCity}
                     </h1>
 
@@ -490,6 +493,7 @@ function renderHTML(data, dataSevenDays) {
   let daydropdownBtn = document.querySelector("#daydropdownBtn");
   let day_dropdown = document.querySelector("#days-dropdown");
   let currentDayName = document.querySelector("#currentDayName");
+
   let daySelectionBtns = document.querySelectorAll("[data-daySelectionBtn]");
   daydropdownBtn.addEventListener("click", (e) => {
     day_dropdown.classList.toggle("hidden");
