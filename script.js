@@ -474,7 +474,7 @@ function renderHTML(data, dataSevenDays) {
               <div
                 class="absolute top-[45px] border border-Neutral600 bg-Neutral800 hidden right-0 p-2 rounded-lg w-[200px]" id="days-dropdown"
               >
-                <h1 class="px-2 py-2 rounded-lg " data-daySelectionBtn>Monday</h1>
+                <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Monday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Tuesday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Wednesday</h1>
                 <h1 class="px-2 py-2 rounded-lg" data-daySelectionBtn>Thursday</h1>
@@ -509,6 +509,7 @@ function renderHTML(data, dataSevenDays) {
   );
 
   let dayBtns = document.querySelectorAll("[data-daySelectionBtn]");
+
   dayBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       btn.classList.add("bg-Neutral700");
@@ -522,6 +523,17 @@ function renderHTML(data, dataSevenDays) {
   });
 
   daySelectionBtns.forEach((items) => {
+    if (today) {
+      if (today === items.innerText) {
+        items.classList.add("bg-Neutral700");
+      }
+    } else {
+      const dayName = findDayName(dataSevenDays.current_weather.time);
+      if (dayName === items.innerText) {
+        items.classList.add("bg-Neutral700");
+      }
+    }
+
     items.addEventListener("click", (e) => {
       today = items.innerText;
       const clickedDateData = getJsDate(today, dataSevenDays.daily.time);
